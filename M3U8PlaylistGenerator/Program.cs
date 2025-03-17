@@ -69,14 +69,14 @@ class M3U8PlaylistGenerator
         // 读取现有的歌单文件内容
         var existingPlaylist = File.ReadAllLines(playlistPath).ToList();
 
-        // 获取已有的文件列表
+        // 获取已有的文件列表（即已经是相对路径）
         var existingFiles = existingPlaylist.Where(line => !line.StartsWith("#")).ToList();
 
         // 找出新增文件
-        var newFiles = allFiles.Where(file => !existingFiles.Contains(file)).ToList();
+        var newFiles = allFiles.Where(file => !existingFiles.Contains(Path.GetRelativePath(directoryPath, file))).ToList();
 
         // 找出被删除的文件
-        var deletedFiles = existingFiles.Where(file => !allFiles.Contains(file)).ToList();
+        var deletedFiles = existingFiles.Where(file => !allFiles.Contains(Path.Combine(directoryPath, file))).ToList();
 
         // 更新歌单内容
         var updatedPlaylist = existingPlaylist
@@ -86,7 +86,9 @@ class M3U8PlaylistGenerator
         // 添加新文件
         foreach (var newFile in newFiles)
         {
-            updatedPlaylist.Add(newFile);
+            // 转换为相对路径
+            string relativePath = Path.GetRelativePath(directoryPath, newFile);
+            updatedPlaylist.Add(relativePath);
         }
 
         // 写回歌单文件
@@ -104,7 +106,11 @@ class M3U8PlaylistGenerator
                                 .ToList();
 
         // 创建新的歌单内容
-        var newPlaylist = allFiles.Select(file => file).ToList();
+        var newPlaylist = allFiles.Select(file =>
+        {
+            // 转换为相对路径
+            return Path.GetRelativePath(directoryPath, file);
+        }).ToList();
 
         // 将歌单内容写入新文件
         File.WriteAllLines(playlistPath, newPlaylist);
