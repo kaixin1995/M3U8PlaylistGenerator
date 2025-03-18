@@ -61,7 +61,7 @@ class M3U8PlaylistGenerator
     static void UpdatePlaylist(string directoryPath, string playlistPath)
     {
         // 获取目录下所有音频文件（过滤掉 .lrc 和其他非音频文件）
-        var audioExtensions = new[] { ".mp3", ".flac", ".wav", ".aac", ".ogg", ".m4a" };
+        var audioExtensions = new[] { ".mp3", ".flac", ".wav", ".aac", ".ogg", ".m4a", ".ape" };
         var allFiles = Directory.GetFiles(directoryPath)
                                 .Where(f => audioExtensions.Contains(Path.GetExtension(f), StringComparer.OrdinalIgnoreCase))
                                 .ToList();
